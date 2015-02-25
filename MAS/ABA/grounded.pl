@@ -6,8 +6,6 @@ argument(b).
 argument(c).
 argument(d).
 
-empty(o).
-
 attacks(a,a).
 attacks(a,b).
 attacks(b,a).
@@ -23,7 +21,7 @@ process(X, X, Final):-
   \+ length(Result, 0),
   findall(D, (member(R, Result), find_defendees(R, D)), DSet),
   flatten(DSet, DefenseSet),
-  findall(D, (member(D, DefenseSet), isDefended([D|Result], D)), Res),
+  findall(D, (member(D, DefenseSet), isDefended(Result, D)), Res),
   append(Result, Res, Final).
   
 process(PrevIteration, CurrentIteration, Final):-
@@ -31,7 +29,7 @@ process(PrevIteration, CurrentIteration, Final):-
   find_initial_grounded_items(Result),
   findall(D, (member(R, Result), find_defendees(R, D)), DSet),
   flatten(DSet, DefenseSet),
-  findall(D, (member(D, DefenseSet), isDefended([D|Result], D)), Res),
+  findall(D, (member(D, DefenseSet), isDefended(Result, D)), Res),
   append(Result, Res, Rez),
   process(CurrentIteration, Rez, Final).
   
@@ -39,7 +37,7 @@ find_defendees(X, DSet):-
   find_attackees(X, Attackees),
   findall(D, (member(A, Attackees), find_attackees(A, D)), Set),
   flatten(Set, DSet).
-  
+ 
   
 find_attackees(X, Attackees):-
   findall(Attack, attacks(X, Attack), Attackees).
@@ -61,16 +59,6 @@ isDefended(Defenders, X):-
   \+ (member(A, Attackers),
       \+ (attacks(D, A), member(D, Defenders))).
       
-union([X|Y],Z,W):- 
-  member(X,Z),
-  union(Y,Z,W).
-  
-union([X|Y],Z,[X|W]):-
-  \+ member(X,Z),
-  union(Y,Z,W).
-  
-union([],Z,Z).
-
 flatten(List, Flat) :-
         flatten(List, Flat, []).
 
